@@ -5,6 +5,54 @@
     font-style: normal;
 }
 
+/* 主题变量：浅色为主题基准（取值与原硬编码一致），深色通过 [data-theme="dark"] 覆盖 */
+:root {
+    --panel-bg: #f0f8ff;
+    --app-bg: #ffffff;
+    --panel-fg: #000000;
+    --accent-teal: #31d0c6;
+    --accent-red: #ee5d70;
+    --border-main: #D15DEE;
+    --resize-bg: #eeeeee;
+    --surface-bg: #ffffff;
+    --canvas-bg: rgba(150, 250, 200, 0.3);
+    /* 布局尺寸变量：原为硬编码像素，集中后可被媒体查询覆盖 */
+    --header-h: 150px;
+    --mini-map-w: 300px;
+    --right-panel-w: 300px;
+    --bottom-h: 150px;
+    --resize-bar-w: 6px;
+    --left-rail-w: 10px;
+    /* 现代化设计 token */
+    --radius-sm: 4px;
+    --radius-md: 6px;
+    --radius-lg: 10px;
+    --space-xs: 4px;
+    --space-sm: 8px;
+    --space-md: 12px;
+    --transition: 150ms ease;
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.08);
+    --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.12);
+    --border-subtle: rgba(128, 128, 128, 0.35);
+    --muted-fg: #5a6672;
+}
+
+[data-theme="dark"] {
+    --panel-bg: #1e2430;
+    --app-bg: #141922;
+    --panel-fg: #e6edf3;
+    --accent-teal: #31d0c6;
+    --accent-red: #ff6b83;
+    --border-main: #b07be0;
+    --resize-bg: #2a3140;
+    --surface-bg: #2a3140;
+    --canvas-bg: rgba(24, 32, 44, 0.95);
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+    --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.5);
+    --border-subtle: rgba(255, 255, 255, 0.15);
+    --muted-fg: #9aa7b4;
+}
+
 
 html, body, .joint-app {
     position: relative;
@@ -22,12 +70,17 @@ body {
     font-family: TsangerYuYangT03, sans-serif, Arial;
     overflow: hidden;
     display:block;
+    background-color: var(--app-bg);
+    color: var(--panel-fg);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    line-height: 1.5;
 }
 
 .app-header {
     position: relative;
     width: 100%;
-    height: 150px;
+    height: var(--header-h);
     overflow: hidden;
 }
 
@@ -40,8 +93,8 @@ body {
 
 .mini-map {
     display: inline-block;
-    width: 300px;
-    height: 150px;
+    width: var(--mini-map-w);
+    height: var(--header-h);
     padding: 0;
 }
 
@@ -54,8 +107,8 @@ height: 10px;
 cursor: nwse-resize;
 margin: 0 -7px -7px 0;
     border-radius: 50%;
-border: 2px solid #31d0c6;
-background-color: #fff;
+border: 2px solid var(--accent-teal);
+background-color: var(--surface-bg);
 }
 
 /*  Toolbar  */
@@ -63,10 +116,10 @@ background-color: #fff;
     display: inline-block;
     position: absolute;
     height: 100%;
-    left: 300px;
+    left: var(--mini-map-w);
     right: 0;
     box-sizing: border-box;
-    background-color: #f0f8ff;
+    background-color: var(--panel-bg);
     z-index: 10;
     overflow: auto;
 }
@@ -75,10 +128,10 @@ background-color: #fff;
     position: absolute;
     left: 0;
     top: 0;
-    width: 10px;
+    width: var(--left-rail-w);
     height: 100%;
     overflow: auto;
-    background-color: #f0f8ff;
+    background-color: var(--panel-bg);
     z-index: 10;
 }
 
@@ -86,25 +139,25 @@ background-color: #fff;
 .main-container {
     position: absolute;
     top: 0;
-    left: 10px;
-    right: 306px;
-    bottom: 150px;
+    left: var(--left-rail-w);
+    right: calc(var(--right-panel-w) + var(--resize-bar-w));
+    bottom: var(--bottom-h);
     overflow: hidden;
-    border:2px solid #D15DEE;
+    border:2px solid var(--border-main);
     box-sizing: border-box;
 }
 
 #app-resize{
     position: absolute;
     top: 0;
-    width: 6px;
-    right: 300px;
-    bottom: 150px;
-    background-color: #eeeeee;
+    width: var(--resize-bar-w);
+    right: var(--right-panel-w);
+    bottom: var(--bottom-h);
+    background-color: var(--resize-bg);
     cursor:ew-resize;    
 }
 #app-resize:hover{
-    background-color:#ee5d70;
+    background-color:var(--accent-red);
 }
 
 /*  Inspector  */
@@ -112,13 +165,13 @@ background-color: #fff;
     position: absolute;
     top: 0;
     right: 0;
-    width: 300px;
-    bottom: 150px; /* navigator height */
+    width: var(--right-panel-w);
+    bottom: var(--bottom-h); /* navigator height */
     /*width: 100%;*/
-    border:2px solid #ee5d70;
+    border:2px solid var(--accent-red);
     box-sizing: border-box;
     overflow: auto;
-    background-color: #f0f8ff;
+    background-color: var(--panel-bg);
 }
 
 /*  Navigator  */
@@ -126,12 +179,479 @@ background-color: #fff;
     position: absolute;
     right: 0;
     bottom: 0;
-    left:10px;
+    left: var(--left-rail-w);
     width: 100%;
-    height: 150px;
-    background-color: #f0f8ff;
+    height: var(--bottom-h);
+    background-color: var(--panel-bg);
     z-index: 10;
 }
+
+/* 响应式：窄屏收缩右侧属性栏与底栏，让主画布获得空间。
+   小地图宽度仅在极窄屏小幅收缩，以免与 JS 中的缩放基准冲突。 */
+@media (max-width: 1200px) {
+    :root {
+        --right-panel-w: 260px;
+    }
+}
+
+@media (max-width: 900px) {
+    :root {
+        --right-panel-w: 220px;
+        --bottom-h: 120px;
+    }
+}
+
+@media (max-width: 640px) {
+    :root {
+        --right-panel-w: 180px;
+        --bottom-h: 100px;
+        --mini-map-w: 220px;
+    }
+}
+
+/* ============================================================
+   现代化样式层（阶段 4）
+   仅覆盖外观：圆角 / 阴影 / 过渡 / 间距 / 焦点态。
+   不改动任何 id、class 语义与内联定位，不影响业务行为。
+   ============================================================ */
+
+/* 面板：统一细边框 + 柔和阴影 */
+.title-container,
+.right-container,
+.bottom-container,
+.left-container {
+    transition: background-color var(--transition);
+}
+
+.mini-map {
+    box-shadow: var(--shadow-sm);
+}
+
+/* 按钮：现代扁平风格（保留 w3 的语义色相，仅统一形状与交互） */
+.w3-btn {
+    border-radius: var(--radius-md) !important;
+    box-shadow: var(--shadow-sm);
+    transition: transform var(--transition), box-shadow var(--transition),
+        background-color var(--transition), filter var(--transition);
+    font-size: 14px;
+    letter-spacing: 0.2px;
+}
+
+.w3-btn:hover {
+    box-shadow: var(--shadow-md);
+    filter: brightness(1.04);
+}
+
+.w3-btn:active {
+    transform: translateY(1px);
+    box-shadow: var(--shadow-sm);
+    filter: brightness(0.97);
+}
+
+/* 文本域：圆角、主题化背景、聚焦高亮 */
+#ReversePol,
+#myModel,
+#ERMemo {
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    background-color: var(--surface-bg);
+    color: var(--panel-fg);
+    padding: var(--space-sm);
+    box-sizing: border-box;
+    font-family: monospace;
+    font-size: 13px;
+    outline: none;
+    transition: border-color var(--transition), box-shadow var(--transition);
+}
+
+#ReversePol:focus,
+#myModel:focus,
+#ERMemo:focus {
+    border-color: var(--accent-teal);
+    box-shadow: 0 0 0 3px rgba(49, 208, 198, 0.2);
+}
+
+/* 文本输入框：统一圆角与聚焦态 */
+#inputFileNameToSaveAs,
+#ERName {
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    background-color: var(--surface-bg);
+    color: var(--panel-fg);
+    box-sizing: border-box;
+    outline: none;
+    transition: border-color var(--transition), box-shadow var(--transition);
+}
+
+#inputFileNameToSaveAs:focus,
+#ERName:focus {
+    border-color: var(--accent-teal);
+    box-shadow: 0 0 0 3px rgba(49, 208, 198, 0.2);
+}
+
+/* 右侧属性栏文字：次要信息弱化色 */
+.right-container {
+    font-size: 13px;
+}
+
+/* 底部状态栏：状态文字样式 + 主题切换按钮定位 */
+.bottom-container {
+    box-shadow: var(--shadow-sm);
+}
+
+.bottom-container #status {
+    margin: var(--space-md);
+    color: var(--muted-fg);
+    font-size: 13px;
+}
+
+#themeToggle {
+    border-radius: var(--radius-md) !important;
+    box-shadow: var(--shadow-sm);
+    transition: box-shadow var(--transition), filter var(--transition);
+}
+
+#themeToggle:hover {
+    box-shadow: var(--shadow-md);
+    filter: brightness(1.05);
+}
+
+/* ============================================================
+   交互提示层（阶段 5）
+   底部状态栏配色 + 右上角浮层提示（toast）。
+   仅呈现，不含业务逻辑。
+   ============================================================ */
+
+/* 状态栏文字按类型着色（替代原内联 style.color） */
+#status.status-info {
+    color: var(--muted-fg);
+}
+
+#status.status-success {
+    color: #1a9e55;
+}
+
+#status.status-error {
+    color: var(--accent-red);
+}
+
+[data-theme="dark"] #status.status-success {
+    color: #4ade80;
+}
+
+/* 浮层容器：右上角堆叠 */
+#toast-container {
+    position: fixed;
+    top: calc(var(--header-h) + var(--space-sm));
+    right: var(--space-md);
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    pointer-events: none;
+    max-width: 360px;
+}
+
+.toast {
+    pointer-events: auto;
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-sm);
+    padding: 10px var(--space-md);
+    border-radius: var(--radius-md);
+    background-color: var(--surface-bg);
+    color: var(--panel-fg);
+    box-shadow: var(--shadow-md);
+    border-left: 4px solid var(--accent-teal);
+    font-size: 13px;
+    line-height: 1.45;
+    cursor: pointer;
+    opacity: 0;
+    transform: translateX(16px);
+    transition: opacity var(--transition), transform var(--transition);
+}
+
+.toast-show {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.toast-icon {
+    flex: 0 0 auto;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: bold;
+    color: #fff;
+    background-color: var(--accent-teal);
+}
+
+.toast-text {
+    word-break: break-word;
+}
+
+.toast-success {
+    border-left-color: #1a9e55;
+}
+
+.toast-success .toast-icon {
+    background-color: #1a9e55;
+}
+
+.toast-error {
+    border-left-color: var(--accent-red);
+}
+
+.toast-error .toast-icon {
+    background-color: var(--accent-red);
+}
+
+/* ============================================================
+   表达式辅助层（阶段 6）
+   实时校验提示 + 示例 chip。仅呈现，校验逻辑为只读调用。
+   ============================================================ */
+
+.expr-tools {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--space-xs) var(--space-sm);
+    margin: 2px 0 var(--space-xs);
+    min-height: 18px;
+}
+
+.expr-hint {
+    font-size: 12px;
+    color: var(--muted-fg);
+    transition: color var(--transition);
+}
+
+.expr-hint-ok {
+    color: #1a9e55;
+}
+
+[data-theme="dark"] .expr-hint-ok {
+    color: #4ade80;
+}
+
+.expr-hint-error {
+    color: var(--accent-red);
+}
+
+.expr-samples {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs);
+    margin-left: auto;
+}
+
+.expr-chip {
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-sm);
+    background-color: var(--surface-bg);
+    color: var(--panel-fg);
+    font-size: 11px;
+    line-height: 1;
+    padding: 3px 6px;
+    cursor: pointer;
+    transition: border-color var(--transition), background-color var(--transition),
+        color var(--transition);
+}
+
+.expr-chip:hover {
+    border-color: var(--accent-teal);
+    color: var(--accent-teal);
+}
+
+/* ============================================================
+   使用说明弹窗（阶段 7）
+   仅 UI 呈现，不含业务逻辑。
+   ============================================================ */
+
+.modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    background-color: rgba(0, 0, 0, 0.45);
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-md);
+}
+
+.modal-overlay.modal-open {
+    display: flex;
+}
+
+.modal-panel {
+    width: min(560px, 92vw);
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--panel-bg);
+    color: var(--panel-fg);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    overflow: hidden;
+}
+
+.modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px var(--space-md);
+    border-bottom: 1px solid var(--border-subtle);
+    font-size: 15px;
+    font-weight: bold;
+}
+
+.modal-close {
+    border: none;
+    background: transparent;
+    color: var(--panel-fg);
+    font-size: 22px;
+    line-height: 1;
+    cursor: pointer;
+    padding: 0 4px;
+    border-radius: var(--radius-sm);
+    transition: background-color var(--transition), color var(--transition);
+}
+
+.modal-close:hover {
+    color: var(--accent-red);
+}
+
+.modal-body {
+    padding: var(--space-md);
+    overflow: auto;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.modal-body ul {
+    margin: var(--space-xs) 0;
+    padding-left: 1.4em;
+}
+
+.modal-body p {
+    margin: var(--space-sm) 0;
+}
+
+/* ============================================================
+   逻辑门工具栏（阶段 8）
+   表达式输入辅助条：点击把 token 插入输入框。
+   仅 UI 呈现与文本插入，不触发解析。
+   ============================================================ */
+
+.gate-toolbar {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 3px;
+    margin: 2px 0 var(--space-xs);
+}
+
+.gate-label {
+    font-size: 12px;
+    color: var(--muted-fg);
+}
+
+.gate-btn {
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-sm);
+    background-color: var(--surface-bg);
+    color: var(--panel-fg);
+    font-size: 11px;
+    line-height: 1;
+    padding: 3px 6px;
+    cursor: pointer;
+    transition: border-color var(--transition), background-color var(--transition),
+        color var(--transition);
+}
+
+.gate-btn:hover {
+    border-color: var(--accent-teal);
+    color: var(--accent-teal);
+    background-color: rgba(49, 208, 198, 0.08);
+}
+
+.gate-btn:active {
+    transform: translateY(1px);
+}
+
+.gate-sep {
+    width: 1px;
+    align-self: stretch;
+    background-color: var(--border-subtle);
+    margin: 0 2px;
+}
+
+.gate-clear:hover {
+    border-color: var(--accent-red);
+    color: var(--accent-red);
+    background-color: rgba(238, 93, 112, 0.08);
+}
+
+/* ============================================================
+   真值表工具（阶段 9）
+   仅 UI 呈现，数值来源于核心 ModelGen 决策表。
+   ============================================================ */
+
+.expr-chip-primary {
+    border-color: var(--accent-teal);
+    color: var(--accent-teal);
+    font-weight: bold;
+}
+
+.expr-chip-primary:hover {
+    background-color: rgba(49, 208, 198, 0.12);
+    color: var(--accent-teal);
+}
+
+.truth-expr {
+    font-family: monospace;
+    color: var(--muted-fg);
+    margin: 0 0 var(--space-sm);
+}
+
+.truth-table {
+    border-collapse: collapse;
+    width: 100%;
+    font-family: monospace;
+    font-size: 13px;
+}
+
+.truth-table th,
+.truth-table td {
+    border: 1px solid var(--border-subtle);
+    padding: 4px 10px;
+    text-align: center;
+}
+
+.truth-table thead th {
+    background-color: var(--surface-bg);
+    font-weight: bold;
+}
+
+.truth-table tbody tr:nth-child(even) {
+    background-color: rgba(128, 128, 128, 0.06);
+}
+
+.truth-table .truth-out {
+    font-weight: bold;
+}
+
+
+
+
+
+
+
 
 
 

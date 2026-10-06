@@ -9,6 +9,7 @@
     <link href="lib/select2.min.css" rel="stylesheet" />
     <link href="lib/w3.css" rel="stylesheet" />
     <link rel="stylesheet" type="text/css" href="style.css" />
+    <script src="theme.js"></script>
 
 
     <!-- dependencies -->
@@ -20,6 +21,7 @@
     <script src="lib/joint.js"></script>
     <script src="lib/select2.min.js"></script>
     <script src="LogicParser.js"></script>
+    <script src="toast.js"></script>
 </head>
 
 <body>
@@ -56,7 +58,39 @@
                     </div>
 
 
-                    <textarea style="width:100%;height:60px" id="ReversePol"></textarea>
+                    <div class="gate-toolbar" id="gateToolbar">
+                        <span class="gate-label">逻辑门：</span>
+                        <button type="button" class="gate-btn" data-token="." title="逻辑与：a b .">与 .</button>
+                        <button type="button" class="gate-btn" data-token="," title="逻辑或：a b ,">或 ,</button>
+                        <button type="button" class="gate-btn" data-token="&lt;" title="逻辑非：a &lt;">非 &lt;</button>
+                        <button type="button" class="gate-btn" data-token="&gt;" title="逻辑推出：a b &gt;">推出 &gt;</button>
+                        <button type="button" class="gate-btn" data-token="=" title="逻辑等价：a b =">等价 =</button>
+                        <span class="gate-sep"></span>
+                        <button type="button" class="gate-btn" data-token="a" title="插入变量 a">a</button>
+                        <button type="button" class="gate-btn" data-token="b" title="插入变量 b">b</button>
+                        <button type="button" class="gate-btn" data-token="c" title="插入变量 c">c</button>
+                        <button type="button" class="gate-btn" data-token="1" title="插入常量 1">1</button>
+                        <button type="button" class="gate-btn" data-token="0" title="插入常量 0">0</button>
+                        <span class="gate-sep"></span>
+                        <button type="button" class="gate-btn gate-clear" data-clear="1" title="清空输入">清空</button>
+                    </div>
+
+                    <textarea style="width:100%;height:60px" id="ReversePol"
+                        placeholder="输入逆波兰逻辑表达式，例如：a b . fe >"></textarea>
+
+                    <div class="expr-tools">
+                        <span id="exprHint" class="expr-hint"></span>
+                        <span class="expr-samples">
+                            <button id="truthTableBtn" type="button" class="expr-chip expr-chip-primary"
+                                onclick="app.showTruthTable()" title="根据当前表达式生成真值表">真值表</button>
+                            <button type="button" class="expr-chip" data-expr="a b .">与</button>
+                            <button type="button" class="expr-chip" data-expr="a b ,">或</button>
+                            <button type="button" class="expr-chip" data-expr="a <">非</button>
+                            <button type="button" class="expr-chip" data-expr="a b >">推出</button>
+                            <button type="button" class="expr-chip" data-expr="a b =">等价</button>
+                            <button type="button" class="expr-chip" data-expr="a b . fe >">示例</button>
+                        </span>
+                    </div>
 
                     <button class="w3-block w3-btn w3-yellow  w3-hover-deep-orange w3-round-large"
                         onclick="app.parseLogic()">解析文本</button>
@@ -125,31 +159,71 @@
                 </div>
                 <button id="ERSetName" class="w3-block w3-btn w3-yellow  w3-hover-deep-orange w3-round-large"
                     onclick="app.ChangeName()">保存修改</button>
-                <div>
-                    在“解析文本”按钮上面的文本框内输入“逆波兰逻辑表达式”。<br/>
-                    “逆波兰逻辑表达式”支持五种逻辑操作符：<br/>
-                    {<br/>
-                    “.”：“a b .”代表“a”和“b”的逻辑与，<br/>
-                    “<”：“a <”代表“a”的逻辑非，<br/>
-                    “,”：“a b ,”代表“a”和“b”的逻辑或，<br/>
-                    “=”：“a b =”代表“a”和“b”的逻辑等价/同或<br/>
-                    “>”：“a b >”代表“a”和“b”的逻辑推出，<br/>
-                      }。<br/>
-                    逆波兰逻辑表达式组合的举例说明：<br/>
-                    {<br/>
-                    “a b . fe >”即代表逻辑表达“a 与 b   推出了   fe”，<br/>
-                    “a b . fe ge > =”即代表逻辑表达“a 与 b  等价于  fe 推出了 ge”<br/>
-                    }。<br/>
-                    之后点击“解析文本”按钮，将“逆波兰逻辑表达式”转换为适合图形表示的 JSON 格式，<br/>
-                    之后再点击“解析文本”按钮旁的“文本转图”，得到最终的正规图形表示。
-                </div>
+                <button id="helpOpenBtn" class="w3-block w3-btn w3-light-grey w3-hover-grey w3-round-large"
+                    onclick="app.openHelp()">使用说明</button>
             </div>
             <div class="bottom-container">
+                <button id="themeToggle" class="w3-btn w3-small w3-round w3-light-grey"
+                    style="position:absolute;top:8px;right:12px;">深色主题</button>
                 <p id="status">Diagram Model loaded from Json Format.</p>
             </div>
         </div>
     </div>
+
+    <!-- 使用说明弹窗（内容为原有帮助文案，仅改为弹窗呈现） -->
+    <div id="helpModal" class="modal-overlay" aria-hidden="true">
+        <div class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="helpTitle">
+            <div class="modal-header">
+                <span id="helpTitle">使用说明</span>
+                <button type="button" class="modal-close" onclick="app.closeHelp()" aria-label="关闭">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>在“解析文本”按钮上面的文本框内输入“逆波兰逻辑表达式”。</p>
+                <p>“逆波兰逻辑表达式”支持五种逻辑操作符：</p>
+                <ul>
+                    <li>“.”：“a b .”代表“a”和“b”的逻辑与，</li>
+                    <li>“&lt;”：“a &lt;”代表“a”的逻辑非，</li>
+                    <li>“,”：“a b ,”代表“a”和“b”的逻辑或，</li>
+                    <li>“=”：“a b =”代表“a”和“b”的逻辑等价/同或，</li>
+                    <li>“&gt;”：“a b &gt;”代表“a”和“b”的逻辑推出。</li>
+                </ul>
+                <p>逆波兰逻辑表达式组合的举例说明：</p>
+                <ul>
+                    <li>“a b . fe &gt;”即代表逻辑表达“a 与 b 推出了 fe”，</li>
+                    <li>“a b . fe ge &gt; =”即代表逻辑表达“a 与 b 等价于 fe 推出了 ge”。</li>
+                </ul>
+                <p>之后点击“解析文本”按钮，将“逆波兰逻辑表达式”转换为适合图形表示的 JSON 格式，之后再点击“解析文本”按钮旁的“文本转图”，得到最终的正规图形表示。</p>
+                <p>补充操作：选中节点后可修改“元素名称 / 元素备注”并点“保存修改”；“图转文本”可将画布导出为 JSON；“保存文本 / 载入文本”用于导出、导入本地 JSON 文件；滚轮缩放，Alt + ↑ / ↓ 缩放，双击空白处清除高亮。</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 真值表弹窗（复用核心 ModelGen 输出） -->
+    <div id="truthModal" class="modal-overlay" aria-hidden="true">
+        <div class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="truthTitle">
+            <div class="modal-header">
+                <span id="truthTitle">真值表</span>
+                <button type="button" class="modal-close" onclick="app.closeTruthTable()"
+                    aria-label="关闭">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p id="truthExpr" class="truth-expr"></p>
+                <div id="truthTableContent"></div>
+            </div>
+        </div>
+    </div>
+
     <script src="ViewGen.js">
+    </script>
+    <script src="exprHelper.js">
+    </script>
+    <script src="toolbar.js">
+    </script>
+    <script src="responsive.js">
+    </script>
+    <script src="help.js">
+    </script>
+    <script src="truthTable.js">
     </script>
 </body>
 

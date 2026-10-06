@@ -511,8 +511,6 @@ $("body").on('keydown', function (e) {
 });
 
 
-const status = document.getElementById('status');
-
 app.makeNode = function (theKey, theLabel, theName, theColor, theImgPath, thePorts) {
     var portColor = "#61549c";
     var theWidth = 100;
@@ -764,14 +762,12 @@ app.parseLogic = function () {
     var exprText = document.getElementById("ReversePol").value;
     var resultParsed = LogicParser(exprText);
     if ("string" == typeof (resultParsed)) {
-        status.textContent = resultParsed;
-        status.style.color = "red";
+        notify(resultParsed, "error");
     } else {
         var viewModel = ViewGen(ModelGen(resultParsed));
         origin = viewModel;
         document.getElementById("myModel").value = JSON.stringify(origin);
-        status.textContent = "Reverse Polish Expression has been parsed.";
-        status.style.color = "black";
+        notify("Reverse Polish Expression has been parsed.", "success");
     }
 };
 
@@ -806,14 +802,14 @@ app.updateGraph = function () {
 app.load=function() {
     try {
         origin = JSON.parse(document.getElementById("myModel").value);
-        status.textContent = "Diagram Model Loaded from JSON format.";
+        notify("Diagram Model Loaded from JSON format.", "success");
     }
     catch (error) {
         origin = {
             nodeArray: [],
             linkArray: []
         };
-        status.textContent = "JSON format Error, Use Empty Format.";
+        notify("JSON format Error, Use Empty Format.", "error");
         document.getElementById("myModel").value = JSON.stringify(origin);
     }
     //ERUpdateOption();
@@ -824,7 +820,7 @@ app.load=function() {
 app.save=function() {
     origin = app.ELDump(graph.toJSON().cells);
     document.getElementById("myModel").value = JSON.stringify(origin);
-    status.textContent = "Diagram Model Saved in JSON format.";
+    notify("Diagram Model Saved in JSON format.", "success");
 
 };
 
@@ -862,10 +858,10 @@ function updateGraph() {
 /*从本地载入文件，保存文件到本地 */
 if (window.FileList && window.File && window.FileReader) {
     document.getElementById("fileToLoad").addEventListener('change', event => {
-        status.textContent = '已载入';
+        notify('已载入', 'success');
         const fileToLoad = event.target.files[0];
         if (!fileToLoad.type) {
-            status.textContent = 'Error: The File.type property does not appear to be supported on this browser.';
+            notify('Error: The File.type property does not appear to be supported on this browser.', 'error');
             return;
         }
         /* if (!file.type.match('image.*')) {
